@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import shutil
 from conans import ConanFile, tools, AutoToolsBuildEnvironment
 
 
@@ -19,10 +18,6 @@ class ProtobufConan(ConanFile):
     exports = ["LICENSE.md"]
     settings = "os_build", "arch_build"
 
-    def build_requirements(self):
-        if self.settings.os_build == "Windows":
-            self.build_requires("msys2_installer/20161025@bincrafters/stable")
-
     def source(self):
         tools.get("{0}/archive/v{1}.tar.gz".format(self.homepage, self.version))
         tools.get("https://github.com/google/googletest/archive/release-1.5.0.tar.gz")
@@ -30,17 +25,19 @@ class ProtobufConan(ConanFile):
 
     def build(self):
         is_win_bash = (self.settings.os_build == "Windows")
+        autotools = AutoToolsBuildEnvironment(self)
         with tools.chdir("protobuf-%s" % self.version):
-            self.run("./autogen.sh", win_bash=is_win_bash)
-            autotools = AutoToolsBuildEnvironment(self, win_bash=is_win_bash)
-            autotools.configure()
-            autotools.make()
+            with tools.environment_append(autotools.vars):
+                self.run("./autogen.sh", win_bash=is_win_bash, msys_mingw=False, run_environment=True)
+                self.run("./configure --enable-shared=no", win_bash=is_win_bash, msys_mingw=False, run_environment=True)
+                self.run("make", win_bash=is_win_bash, msys_mingw=False, run_environment=True)
 
     def package(self):
         is_win_bash = (self.settings.os_build == "Windows")
+        autotools = AutoToolsBuildEnvironment(self)
         with tools.chdir("protobuf-%s" % self.version):
-            autotools = AutoToolsBuildEnvironment(self, win_bash=is_win_bash)
-            autotools.install()
+            with tools.environment_append(autotools.vars):
+                self.run("make install prefix=%s" % tools.unix_path(self.package_folder), win_bash=is_win_bash, msys_mingw=False, run_environment=True)
 
     def package_info(self):
         self.env_info.PATH.append(os.path.join(self.package_folder, "bin"))
