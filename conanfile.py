@@ -19,21 +19,27 @@ class ProtobufConan(ConanFile):
     exports = ["LICENSE.md"]
     settings = "os_build", "arch_build"
 
+    def build_requirements(self):
+        if self.settings.os_build == "Windows":
+            self.build_requires("msys2_installer/20161025@bincrafters/stable")
+
     def source(self):
         tools.get("{0}/archive/v{1}.tar.gz".format(self.homepage, self.version))
         tools.get("https://github.com/google/googletest/archive/release-1.5.0.tar.gz")
         os.rename("googletest-release-1.5.0", os.path.join("protobuf-%s" % self.version, "gtest"))
 
     def build(self):
+        is_win_bash = (self.settings.os_build == "Windows")
         with tools.chdir("protobuf-%s" % self.version):
-            self.run("./autogen.sh")
-            autotools = AutoToolsBuildEnvironment(self)
+            self.run("./autogen.sh", win_bash=is_win_bash)
+            autotools = AutoToolsBuildEnvironment(self, win_bash=is_win_bash)
             autotools.configure()
             autotools.make()
 
     def package(self):
+        is_win_bash = (self.settings.os_build == "Windows")
         with tools.chdir("protobuf-%s" % self.version):
-            autotools = AutoToolsBuildEnvironment(self)
+            autotools = AutoToolsBuildEnvironment(self, win_bash=is_win_bash)
             autotools.install()
 
     def package_info(self):
