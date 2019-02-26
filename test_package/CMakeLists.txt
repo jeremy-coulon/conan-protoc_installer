@@ -6,12 +6,12 @@ conan_basic_setup()
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-find_package(protoc CONFIG REQUIRED)
+find_package(Protobuf REQUIRED)
 
-message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
+message(STATUS "Using Protocol Buffers ${Protobuf_VERSION}")
 
 if(protobuf_MODULE_COMPATIBLE)
-    PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS addressbook.proto)
+    protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS addressbook.proto)
     message(STATUS "PROTO_SRCS: ${PROTO_SRCS}")
     message(STATUS "PROTO_HDRS: ${PROTO_HDRS}")
 endif(protobuf_MODULE_COMPATIBLE)
