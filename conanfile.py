@@ -33,11 +33,10 @@ class ProtobufConan(ConanFile):
                 self.run("make", win_bash=is_win_bash, msys_mingw=False, run_environment=True)
 
     def package(self):
-        is_win_bash = (self.settings.os_build == "Windows")
-        autotools = AutoToolsBuildEnvironment(self)
-        with tools.chdir("protobuf-%s" % self.version):
-            with tools.environment_append(autotools.vars):
-                self.run("make install prefix=%s" % tools.unix_path(self.package_folder), win_bash=is_win_bash, msys_mingw=False, run_environment=True)
+        if self.settings.os_build == "Windows":
+            self.copy("protoc.exe", src="protobuf-%s/src" % self.version, dst="bin")
+        else:
+            self.copy("protoc", src="protobuf-%s/src" % self.version, dst="bin")
 
     def package_info(self):
         self.env_info.PATH.append(os.path.join(self.package_folder, "bin"))
