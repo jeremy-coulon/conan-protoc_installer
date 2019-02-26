@@ -9,7 +9,7 @@ from conans import ConanFile, tools, AutoToolsBuildEnvironment
 class ProtobufConan(ConanFile):
     name = "protoc_installer"
     version = "2.5.0"
-    url = "https://github.com/bincrafters/conan-protoc_installer"
+    url = "https://github.com/jeremy-coulon/conan-protoc_installer"
     homepage = "https://github.com/protocolbuffers/protobuf"
     topics = ("protocol-buffers", "protocol-compiler", "serialization", "rpc")
     author = "Bincrafters <bincrafters@gmail.com>"
