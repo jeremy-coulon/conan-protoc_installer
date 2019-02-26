@@ -18,28 +18,23 @@ class ProtobufConan(ConanFile):
     license = "BSD-3-Clause"
     exports = ["LICENSE.md"]
     settings = "os_build", "arch_build"
-    short_paths = True
 
     def source(self):
         tools.get("{0}/archive/v{1}.tar.gz".format(self.homepage, self.version))
-        files = os.listdir("protobuf-%s" % self.version)
-        for f in files:
-            shutil.move(os.path.join("protobuf-%s" % self.version, f), ".")
-        os.rmdir("protobuf-%s" % self.version)
         tools.get("https://github.com/google/googletest/archive/release-1.5.0.tar.gz")
-        os.rename("googletest-release-1.5.0", "gtest")
-
-#        cmake.definitions["protobuf_WITH_ZLIB"] = False
+        os.rename("googletest-release-1.5.0", os.path.join("protobuf-%s" % self.version, "gtest"))
 
     def build(self):
-        self.run("./autogen.sh")
-        autotools = AutoToolsBuildEnvironment(self)
-        autotools.configure(args=["--without-zlib", "--enable-static=false"])
-        autotools.make()
+        with tools.chdir("protobuf-%s" % self.version):
+            self.run("./autogen.sh")
+            autotools = AutoToolsBuildEnvironment(self)
+            autotools.configure()
+            autotools.make()
 
     def package(self):
-        autotools = AutoToolsBuildEnvironment(self)
-        autotools.install()
+        with tools.chdir("protobuf-%s" % self.version):
+            autotools = AutoToolsBuildEnvironment(self)
+            autotools.install()
 
     def package_info(self):
         self.env_info.PATH.append(os.path.join(self.package_folder, "bin"))
