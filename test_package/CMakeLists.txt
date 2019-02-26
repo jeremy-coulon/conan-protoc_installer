@@ -10,8 +10,6 @@ find_package(Protobuf REQUIRED)
 
 message(STATUS "Using Protocol Buffers ${Protobuf_VERSION}")
 
-if(protobuf_MODULE_COMPATIBLE)
-    protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS addressbook.proto)
-    message(STATUS "PROTO_SRCS: ${PROTO_SRCS}")
-    message(STATUS "PROTO_HDRS: ${PROTO_HDRS}")
-endif(protobuf_MODULE_COMPATIBLE)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS addressbook.proto)
+message(STATUS "PROTO_SRCS: ${PROTO_SRCS}")
+message(STATUS "PROTO_HDRS: ${PROTO_HDRS}")

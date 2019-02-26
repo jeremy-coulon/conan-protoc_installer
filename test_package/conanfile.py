@@ -9,8 +9,6 @@ class TestPackageConan(ConanFile):
 
     def build(self):
         cmake = CMake(self)
-        cmake.definitions["protobuf_VERBOSE"] = True
-        cmake.definitions["protobuf_MODULE_COMPATIBLE"] = True
         cmake.configure()
         cmake.build()
 
