@@ -7,7 +7,6 @@ from conans import ConanFile, CMake
 
 class TestPackageConan(ConanFile):
     settings = "os", "arch"
-    exports = "addressbook.proto"
 
     def test(self):
         self.run("protoc --version", run_environment=True)
